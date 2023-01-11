@@ -43,9 +43,12 @@ func MakeLinkWithPage(link string, page int) (string, error) {
 func (items *DirectelEctricObjects) ParseItems(link string) {
 	fmt.Println("Parse", link)
 
+	var next bool = true
+	var schetchik int = 1
+
 	c := colly.NewCollector()
 
-	// Find and visit all links
+	// Карточки товара
 	c.OnHTML("div[class=item]", func(e *colly.HTMLElement) {
 		var item Product
 		item.NameFew = e.DOM.Find("a[class^=item__title]").Text()
@@ -53,15 +56,47 @@ func (items *DirectelEctricObjects) ParseItems(link string) {
 		items.Data = append(items.Data, item)
 	})
 
-	c.Visit(link)
+	// Проверить можно ли дальше листать
+	c.OnHTML("[class=pagination__next]", func(e *colly.HTMLElement) {
+		//fmt.Println(e.DOM.Text())
+		hrefNext, hrefNextIsExit := e.DOM.Attr("href")
+		fmt.Println(">>", hrefNext, hrefNextIsExit)
+		if !hrefNextIsExit {
+			next = false
+		} else {
+			u, err := url.Parse(URL + hrefNext)
+			if err != nil {
+				panic(err)
+			}
+
+			m, _ := url.ParseQuery(u.RawQuery)
+
+			//fmt.Println("m[PAGEN_1][0]", m["PAGEN_1"][0], "schetchik", schetchik)
+			if m["PAGEN_1"][0] == strconv.Itoa(schetchik) {
+				next = false
+			}
+		}
+	})
+
+	for {
+		if !next {
+			break
+		}
+		// Делаем ссылку со страницей
+		linkPages, _ := MakeLinkWithPage(link, schetchik)
+
+		// Парсим
+		c.Visit(linkPages)
+		schetchik++
+	}
 
 }
 
-// Функция парсит каждую [страницу] товаров
+// Функция парсит каждую [страницу] товара
 //
 // [страницу]: https://www.directelectric.ru/catalog/product/180150/
 func (items *DirectelEctricObjects) ParseAllItem(link string) {
-	fmt.Println("Parse Item", link)
+	//fmt.Println("Parse Item", link)
 
 	c := colly.NewCollector()
 	var itemIndex int = 0
@@ -81,22 +116,26 @@ func (items *DirectelEctricObjects) ParseAllItem(link string) {
 	})
 
 	// Цена
-	c.OnHTML("div[class=buy__price] span div span:nth-of-type(1)", func(e *colly.HTMLElement) {
+	c.OnHTML("div[class=buy__price] div span:first-of-type", func(e *colly.HTMLElement) {
 		cost := e.DOM.Text()
-		fmt.Println("cost", cost)
-		reg := regexp.MustCompile("0123456789,")
+		//fmt.Println("cost", cost)
+		reg := regexp.MustCompile("[^0-9.]+")
 		replaceStr := reg.ReplaceAllString(cost, "")
-		fmt.Println("replaceStr", replaceStr)
+		//fmt.Println("replaceStr", replaceStr)
+		if n, err := strconv.ParseFloat(replaceStr, 64); err == nil {
+			items.Data[itemIndex].Price = n
+		}
 	})
 
-	items.Data[itemIndex].Specifications = make(map[string]string) // Выделяем память в мапу
-	c.Visit(URL + items.Data[0].Link)
+	for itemIndex, itemVal := range items.Data {
+		fmt.Println("Parse Item: ", itemIndex, "/", len(items.Data))
+		items.Data[itemIndex].Specifications = make(map[string]string) // Выделяем память в мапу
+		c.Visit(URL + itemVal.Link)
+		itemIndex++
+	}
 
 	/*
-		for _, itemVal := range items.Data {
-			c.Visit(URL + itemVal.Link)
-			itemIndex++
-		}
+		items.Data[itemIndex].Specifications = make(map[string]string) // Выделяем память в мапу
+		c.Visit(URL + items.Data[0].Link)
 	*/
-
 }

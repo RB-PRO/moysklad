@@ -12,13 +12,11 @@ func Run() {
 
 	link, _ := dataFile("link")
 
-	linkPages, _ := directelectric.MakeLinkWithPage(link, 2)
-
 	var items directelectric.DirectelEctricObjects
 
-	items.ParseItems(linkPages)
+	items.ParseItems(link)
 
-	items.ParseAllItem(linkPages)
+	items.ParseAllItem(link)
 
 	fmt.Println(items.Data[0].Specifications)
 }
