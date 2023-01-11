@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"io"
 	"os"
 
@@ -18,7 +17,7 @@ func Run() {
 
 	items.ParseAllItem(link)
 
-	fmt.Println(items.Data[0].Specifications)
+	items.SaveXlsx()
 }
 
 // Получение значение из файла

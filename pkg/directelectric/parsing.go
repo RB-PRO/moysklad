@@ -17,6 +17,7 @@ type DirectelEctricObjects struct {
 }
 type Product struct {
 	Link           string            // Ссылка на товар
+	imageLink      string            // Ссылка на фото товара
 	NameFull       string            // Полное Название товара
 	NameFew        string            // Краткое Название товара
 	Article        string            // Артикул
@@ -78,6 +79,12 @@ func (items *DirectelEctricObjects) ParseItems(link string) {
 		}
 	})
 
+	/*
+		fmt.Println(next)
+		linkPages, _ := MakeLinkWithPage(link, schetchik)
+		c.Visit(linkPages)
+	*/
+
 	for {
 		if !next {
 			break
@@ -89,17 +96,16 @@ func (items *DirectelEctricObjects) ParseItems(link string) {
 		c.Visit(linkPages)
 		schetchik++
 	}
-
 }
+
+// Говно, надо отказаься от идеи использования глобальных переменных
+var itemIndexGlobal int = 0
 
 // Функция парсит каждую [страницу] товара
 //
 // [страницу]: https://www.directelectric.ru/catalog/product/180150/
 func (items *DirectelEctricObjects) ParseAllItem(link string) {
-	//fmt.Println("Parse Item", link)
-
 	c := colly.NewCollector()
-	var itemIndex int = 0
 
 	// Характеристики
 	c.OnHTML("div[class=characteristics__list] div[class^=characteristics__item]", func(e *colly.HTMLElement) {
@@ -109,9 +115,9 @@ func (items *DirectelEctricObjects) ParseAllItem(link string) {
 		case "":
 			break
 		case "Артикул":
-			items.Data[itemIndex].Article = value // Заполняем артикул
+			items.Data[itemIndexGlobal].Article = value // Заполняем артикул
 		default:
-			items.Data[itemIndex].Specifications[key] = value // Заполняем мапу характеристиками товара
+			items.Data[itemIndexGlobal].Specifications[key] = value // Заполняем мапу характеристиками товара
 		}
 	})
 
@@ -123,19 +129,26 @@ func (items *DirectelEctricObjects) ParseAllItem(link string) {
 		replaceStr := reg.ReplaceAllString(cost, "")
 		//fmt.Println("replaceStr", replaceStr)
 		if n, err := strconv.ParseFloat(replaceStr, 64); err == nil {
-			items.Data[itemIndex].Price = n
+			items.Data[itemIndexGlobal].Price = n
 		}
 	})
 
-	for itemIndex, itemVal := range items.Data {
-		fmt.Println("Parse Item: ", itemIndex, "/", len(items.Data))
-		items.Data[itemIndex].Specifications = make(map[string]string) // Выделяем память в мапу
+	// Фото imageLink
+	c.OnHTML("div[class=product__slider-item] img", func(e *colly.HTMLElement) {
+		items.Data[itemIndexGlobal].imageLink, _ = e.DOM.Attr("src")
+		items.Data[itemIndexGlobal].imageLink = URL + items.Data[itemIndexGlobal].imageLink
+	})
+
+	for _, itemVal := range items.Data {
+		fmt.Println("Parse Item: ", itemIndexGlobal+1, "/", len(items.Data))
+		items.Data[itemIndexGlobal].Specifications = make(map[string]string) // Выделяем память в мапу
 		c.Visit(URL + itemVal.Link)
-		itemIndex++
+		itemIndexGlobal++
+
 	}
 
 	/*
-		items.Data[itemIndex].Specifications = make(map[string]string) // Выделяем память в мапу
+		items.Data[itemIndexGlobal].Specifications = make(map[string]string) // Выделяем память в мапу
 		c.Visit(URL + items.Data[0].Link)
 	*/
 }
