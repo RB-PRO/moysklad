@@ -25,6 +25,7 @@ type Product struct {
 	Specifications map[string]string // Остальные характеристики
 }
 
+// Изменить ссылку с параметром запрашиваемой страницы
 func MakeLinkWithPage(link string, page int) (string, error) {
 	urlA, err := url.Parse(link)
 	if err != nil {
