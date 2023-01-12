@@ -38,11 +38,33 @@ func MakeLinkWithPage(link string, page int) (string, error) {
 	return urlA.String(), nil
 }
 
+// Функция парсит [каталог] с ссылками на все подкатегории
+//
+// [каталог]: https://www.directelectric.ru/catalog/
+func ParseCatalogs() []string {
+	c := colly.NewCollector() // Создаём экземпляр для библиотеки gocolly
+
+	var links []string
+
+	// Идём по категориям товара
+	c.OnHTML("a[class^=catalog-top__main-section]", func(e *colly.HTMLElement) {
+		link, linksExit := e.DOM.Attr("href")
+		//fmt.Println(link, linksExit)
+		if linksExit {
+			links = append(links, link)
+		}
+	})
+
+	c.Visit(URL + "/catalog/")
+
+	return links
+}
+
 // Функция парсит [страницу] по определённому page
 //
 // [страницу]: https://www.directelectric.ru/catalog/rozetki-i-vyklyuchateli/filter/vendor_new-is-schneider%20electric/serial-is-atlasdesign/apply/?PAGEN_1=2&nal=y
-func (items *DirectelEctricObjects) ParseItems(link string) {
-	fmt.Println("Parse", link)
+func (items *DirectelEctricObjects) ParseItems(links []string) {
+	//fmt.Println("Parse", link)
 
 	var next bool = true
 	var schetchik int = 1
@@ -61,7 +83,7 @@ func (items *DirectelEctricObjects) ParseItems(link string) {
 	c.OnHTML("[class=pagination__next]", func(e *colly.HTMLElement) {
 		//fmt.Println(e.DOM.Text())
 		hrefNext, hrefNextIsExit := e.DOM.Attr("href")
-		fmt.Println(">>", hrefNext, hrefNextIsExit)
+		//fmt.Println(">>", hrefNext, hrefNextIsExit)
 		if !hrefNextIsExit {
 			next = false
 		} else {
@@ -85,16 +107,24 @@ func (items *DirectelEctricObjects) ParseItems(link string) {
 		c.Visit(linkPages)
 	*/
 
-	for {
-		if !next {
-			break
-		}
-		// Делаем ссылку со страницей
-		linkPages, _ := MakeLinkWithPage(link, schetchik)
+	for _, link := range links {
+		fmt.Println("> Парсинг подкаталога", URL+link)
+		for {
+			fmt.Println("--> Страница", schetchik)
 
-		// Парсим
-		c.Visit(linkPages)
-		schetchik++
+			// Выход из цикла парсинга
+			if !next {
+				next = true
+				break
+			}
+
+			// Делаем ссылку со страницей
+			linkPages, _ := MakeLinkWithPage(URL+link, schetchik)
+
+			// Парсим
+			c.Visit(linkPages)
+			schetchik++
+		}
 	}
 }
 
@@ -104,7 +134,7 @@ var itemIndexGlobal int = 0
 // Функция парсит каждую [страницу] товара
 //
 // [страницу]: https://www.directelectric.ru/catalog/product/180150/
-func (items *DirectelEctricObjects) ParseAllItem(link string) {
+func (items *DirectelEctricObjects) ParseAllItem() {
 	c := colly.NewCollector()
 
 	// Характеристики

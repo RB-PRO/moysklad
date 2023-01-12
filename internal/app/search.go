@@ -7,15 +7,41 @@ import (
 	"github.com/RB-PRO/moysklad/pkg/directelectric"
 )
 
-func Run() {
+// Тестовый запуск по всем категориям
+func RunAllCategory() {
 
-	link, _ := dataFile("link")
+	// Получить все категории на директ электрике
+	links := directelectric.ParseCatalogs()
 
+	//fmt.Println(links)
+
+	// Определение структуры
 	var items directelectric.DirectelEctricObjects
 
-	items.ParseItems(link)
+	// Пропарсить в подкатегории
+	items.ParseItems(links)
 
-	items.ParseAllItem(link)
+	// Пропарсить карточки товаров
+	items.ParseAllItem()
+
+	items.SaveXlsx()
+}
+
+// Тестовый запуск по link розеток
+func RunOneLink() {
+
+	link, _ := dataFile("link")
+	links := make([]string, 1)
+	links[0] = link
+
+	// Определение структуры
+	var items directelectric.DirectelEctricObjects
+
+	// Пропарсить в подкатегории
+	items.ParseItems(links)
+
+	// Пропарсить карточки товаров
+	items.ParseAllItem()
 
 	items.SaveXlsx()
 }

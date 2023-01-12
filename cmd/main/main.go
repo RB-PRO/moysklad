@@ -5,6 +5,7 @@ import (
 )
 
 func main() {
-	//app.Run()
-	app.AddProduct()
+	app.RunAllCategory() // Запуск по всем категориям
+	//app.RunOneLink()     // Запуск по тестовой ссылке
+	//app.AddProduct() // Работа с сервисом moysklad
 }
