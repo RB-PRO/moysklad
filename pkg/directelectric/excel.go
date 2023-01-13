@@ -46,23 +46,29 @@ func (items DirectelEctricObjects) SaveXlsx() error {
 	}
 
 	wotkSheet := "main"
-	setHead(book, wotkSheet, 1, "Ссылка на товар")
-	setHead(book, wotkSheet, 2, "Фото")
-	setHead(book, wotkSheet, 3, "Полное Название товара")
-	setHead(book, wotkSheet, 4, "Краткое Название товара")
-	setHead(book, wotkSheet, 5, "Артикул")
-	setHead(book, wotkSheet, 6, "Цена")
-	startIndexCollumn := 7
+	setHead(book, wotkSheet, 1, "Ссылка на товар")            // Link
+	setHead(book, wotkSheet, 2, "Фото")                       // imageLink
+	setHead(book, wotkSheet, 3, "Полное Название товара")     // NameFull
+	setHead(book, wotkSheet, 4, "Краткое Название товара")    // NameFew
+	setHead(book, wotkSheet, 5, "Описание товара")            // Description
+	setHead(book, wotkSheet, 6, "Артикул")                    // Article
+	setHead(book, wotkSheet, 7, "Цена")                       // Price
+	setHead(book, wotkSheet, 8, "Наличие")                    // Availability
+	setHead(book, wotkSheet, 9, "Размерность(шт, кг, тонна)") // Dimension
+	startIndexCollumn := 10
 
 	// Создаём мапу, которая будет содержать значения номеров колонок
 	colName := make(map[string]int)
 	for indexItem, valItem := range items.Data {
-		setCell(book, wotkSheet, indexItem, 1, URL+valItem.Link)
-		setCell(book, wotkSheet, indexItem, 2, valItem.imageLink)
-		setCell(book, wotkSheet, indexItem, 3, valItem.NameFull)
-		setCell(book, wotkSheet, indexItem, 4, valItem.NameFew)
-		setCell(book, wotkSheet, indexItem, 5, valItem.Article)
-		setCell(book, wotkSheet, indexItem, 6, valItem.Price)
+		setCell(book, wotkSheet, indexItem, 1, URL+valItem.Link)     // Ссылка на товар
+		setCell(book, wotkSheet, indexItem, 2, valItem.imageLink)    // Фото
+		setCell(book, wotkSheet, indexItem, 3, valItem.NameFull)     // Полное Название товар
+		setCell(book, wotkSheet, indexItem, 4, valItem.NameFew)      // Краткое Название товара
+		setCell(book, wotkSheet, indexItem, 5, valItem.Description)  // Описание товара
+		setCell(book, wotkSheet, indexItem, 6, valItem.Article)      // Артикул
+		setCell(book, wotkSheet, indexItem, 7, valItem.Price)        // Цена
+		setCell(book, wotkSheet, indexItem, 8, valItem.Availability) // Наличие
+		setCell(book, wotkSheet, indexItem, 9, valItem.Dimension)    // Размерность(шт, кг, тонна)
 
 		for key, val := range valItem.Specifications {
 			if _, ok := colName[key]; ok { // Если такое значение существует(т.е. существует колонка)

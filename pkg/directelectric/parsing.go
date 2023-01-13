@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/gocolly/colly"
 )
@@ -15,13 +16,20 @@ const URL string = "https://www.directelectric.ru"
 type DirectelEctricObjects struct {
 	Data []Product
 }
+
+// Структура карточки товара
+//
+// Главная особенность - гарантированные данные
 type Product struct {
 	Link           string            // Ссылка на товар
 	imageLink      string            // Ссылка на фото товара
 	NameFull       string            // Полное Название товара
 	NameFew        string            // Краткое Название товара
+	Description    string            // Описание товара
 	Article        string            // Артикул
 	Price          float64           // Цена
+	Availability   bool              // Наличие
+	Dimension      string            // Размерность(шт, кг, тонна)
 	Specifications map[string]string // Остальные характеристики
 }
 
@@ -32,7 +40,9 @@ func MakeLinkWithPage(link string, page int) (string, error) {
 		return "", err
 	}
 	values := urlA.Query()
-	values.Set("PAGEN_1", strconv.Itoa(page))
+	values.Set("PAGEN_1", strconv.Itoa(page)) // Страница
+	values.Set("nal", "n")                    // В наличии = false(Значит будут показываеться товары как в наличии, так и нет)
+	values.Set("limit", "16")                 // Показывать по 16 товаров на странице. Это необходимо для корректного отображения всех товаров. ПРи 24 отображается всего 20
 
 	urlA.RawQuery = values.Encode()
 
@@ -74,9 +84,23 @@ func (items *DirectelEctricObjects) ParseItems(links []string) {
 
 	// Карточки товара
 	c.OnHTML("div[class=item]", func(e *colly.HTMLElement) {
+
+		// Создаём экземпляр товара
 		var item Product
+
+		// Краткое название
 		item.NameFew = e.DOM.Find("a[class^=item__title]").Text()
+		item.NameFew = strings.TrimSpace(item.NameFew)
+
+		// Ссылка на товар
 		item.Link, _ = e.DOM.Find("a[class^=item__title]").Attr("href")
+
+		// Наличие
+		fmt.Println(e.DOM.Find("a[class^=item__stock-title]").Text())
+		if e.DOM.Find("a[class^=item__stock-title]").Text() == "В наличии" { // "В наличии" "Нет в наличии"
+			item.Availability = true
+		}
+
 		items.Data = append(items.Data, item)
 	})
 
@@ -102,31 +126,33 @@ func (items *DirectelEctricObjects) ParseItems(links []string) {
 		}
 	})
 
+	///*
+	fmt.Println(next, URL+links[0])
+	linkPages, _ := MakeLinkWithPage(URL+links[0], schetchik)
+	c.Visit(linkPages)
+	//*/
+
 	/*
-		fmt.Println(next)
-		linkPages, _ := MakeLinkWithPage(link, schetchik)
-		c.Visit(linkPages)
-	*/
+		for _, link := range links {
+			fmt.Println("> Парсинг подкаталога", URL+link)
+			for {
+				fmt.Println("--> Страница", schetchik)
 
-	for _, link := range links {
-		fmt.Println("> Парсинг подкаталога", URL+link)
-		for {
-			fmt.Println("--> Страница", schetchik)
+				// Выход из цикла парсинга
+				if !next {
+					next = true
+					break
+				}
 
-			// Выход из цикла парсинга
-			if !next {
-				next = true
-				break
+				// Делаем ссылку со страницей
+				linkPages, _ := MakeLinkWithPage(URL+link, schetchik)
+
+				// Парсим
+				c.Visit(linkPages)
+				schetchik++
 			}
-
-			// Делаем ссылку со страницей
-			linkPages, _ := MakeLinkWithPage(URL+link, schetchik)
-
-			// Парсим
-			c.Visit(linkPages)
-			schetchik++
 		}
-	}
+	*/
 }
 
 // Говно, надо отказаься от идеи использования глобальных переменных
