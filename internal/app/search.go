@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"io"
 	"os"
 
@@ -13,7 +14,7 @@ func RunAllCategory() {
 	// Получить все категории на директ электрике
 	links := directelectric.ParseCatalogs()
 
-	//fmt.Println(links)
+	fmt.Println(links)
 
 	// Определение структуры
 	var items directelectric.DirectelEctricObjects

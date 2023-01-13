@@ -75,10 +75,34 @@ func ParseCatalogs() []string {
 //
 // [страницу]: https://www.directelectric.ru/catalog/rozetki-i-vyklyuchateli/filter/vendor_new-is-schneider%20electric/serial-is-atlasdesign/apply/?PAGEN_1=2&nal=y
 func (items *DirectelEctricObjects) ParseItems(links []string) {
+
+	var schetchik int = 1
+
+	for _, link := range links {
+		fmt.Println("> Парсинг подкаталога", URL+link)
+		for {
+			fmt.Println("--> Страница", schetchik)
+
+			// Выход из цикла парсинга
+			if !next {
+				next = true
+				break
+			}
+
+			// Делаем ссылку со страницей
+			linkPages, _ := MakeLinkWithPage(URL+link, schetchik)
+
+			// Парсим
+			c.Visit(linkPages)
+			schetchik++
+		}
+	}
+}
+
+func (items *DirectelEctricObjects) parseItem(link string, schetchik int) {
 	//fmt.Println("Parse", link)
 
 	var next bool = true
-	var schetchik int = 1
 
 	c := colly.NewCollector()
 
@@ -125,34 +149,32 @@ func (items *DirectelEctricObjects) ParseItems(links []string) {
 			}
 		}
 	})
-
-	///*
-	fmt.Println(next, URL+links[0])
-	linkPages, _ := MakeLinkWithPage(URL+links[0], schetchik)
-	c.Visit(linkPages)
-	//*/
-
 	/*
 		for _, link := range links {
-			fmt.Println("> Парсинг подкаталога", URL+link)
-			for {
-				fmt.Println("--> Страница", schetchik)
-
-				// Выход из цикла парсинга
-				if !next {
-					next = true
-					break
-				}
-
-				// Делаем ссылку со страницей
-				linkPages, _ := MakeLinkWithPage(URL+link, schetchik)
-
-				// Парсим
-				c.Visit(linkPages)
-				schetchik++
-			}
+			fmt.Println(next, URL+link)
+			linkPages, _ := MakeLinkWithPage(URL+link, schetchik)
+			c.Visit(linkPages)
 		}
 	*/
+
+	for {
+		fmt.Println("--> Страница", schetchik)
+
+		// Выход из цикла парсинга
+		if !next {
+			next = true
+			break
+		}
+
+		// Делаем ссылку со страницей
+		linkPages, _ := MakeLinkWithPage(URL+link, schetchik)
+
+		// Парсим
+		c.Visit(linkPages)
+		schetchik++
+
+	}
+
 }
 
 // Говно, надо отказаься от идеи использования глобальных переменных

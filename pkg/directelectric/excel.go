@@ -20,8 +20,8 @@ func makeWorkBook() (*excelize.File, error) {
 }
 
 // Сохранить и закрыть файл
-func closeXlsx(f *excelize.File) error {
-	if err := f.SaveAs("directelectric.xlsx"); err != nil {
+func closeXlsx(f *excelize.File, filename string) error {
+	if err := f.SaveAs(filename + ".xlsx"); err != nil {
 		return err
 	}
 	if err := f.Close(); err != nil {
@@ -85,7 +85,7 @@ func (items DirectelEctricObjects) SaveXlsx() error {
 	}
 
 	// Закрыть книгу
-	closeBookError := closeXlsx(book)
+	closeBookError := closeXlsx(book, "directelectric")
 	if closeBookError != nil {
 		return closeBookError
 	}
