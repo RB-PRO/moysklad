@@ -96,8 +96,8 @@ func (items *DirectelEctricObjects) ParseItems(links []string) {
 		item.Link, _ = e.DOM.Find("a[class^=item__title]").Attr("href")
 
 		// Наличие
-		fmt.Println(e.DOM.Find("a[class^=item__stock-title]").Text())
-		if e.DOM.Find("a[class^=item__stock-title]").Text() == "В наличии" { // "В наличии" "Нет в наличии"
+		//fmt.Println(e.DOM.Find("div[class^=item__stock-title]").Text())
+		if e.DOM.Find("div[class^=item__stock-title]").Text() == "В наличии" { // "В наличии" "Нет в наличии"
 			item.Availability = true
 		}
 
@@ -190,10 +190,24 @@ func (items *DirectelEctricObjects) ParseAllItem() {
 		}
 	})
 
+	// Размерность
+	c.OnHTML("div[class=buy__price] div span:last-of-type", func(e *colly.HTMLElement) {
+		items.Data[itemIndexGlobal].Dimension = strings.ReplaceAll(e.DOM.Text(), "/", "")
+	})
+
 	// Фото imageLink
 	c.OnHTML("div[class=product__slider-item] img", func(e *colly.HTMLElement) {
 		items.Data[itemIndexGlobal].imageLink, _ = e.DOM.Attr("src")
 		items.Data[itemIndexGlobal].imageLink = URL + items.Data[itemIndexGlobal].imageLink
+	})
+
+	// Описание товара
+	// product-tabs__tab product-tabs__tab_active
+	c.OnHTML("div[class*=product-tabs__tab_active]", func(e *colly.HTMLElement) {
+		//fmt.Println(e.DOM.Text())
+		items.Data[itemIndexGlobal].NameFull = e.DOM.Find("div[class=h3]").Text() // Полное название товара
+		e.DOM.Find("div").Remove()
+		items.Data[itemIndexGlobal].Description = strings.TrimSpace(e.DOM.Text())
 	})
 
 	for _, itemVal := range items.Data {
