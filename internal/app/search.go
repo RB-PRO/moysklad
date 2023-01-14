@@ -14,7 +14,7 @@ func RunAllCategory() {
 	// Получить все категории на директ электрике
 	links := directelectric.ParseCatalogs()
 
-	fmt.Println(links)
+	fmt.Println("Ссылки для парсинга: ", links)
 
 	// Определение структуры
 	var items directelectric.DirectelEctricObjects
@@ -25,7 +25,17 @@ func RunAllCategory() {
 	// Пропарсить карточки товаров
 	items.ParseAllItem()
 
-	items.SaveXlsx()
+	items.SaveXlsx("directelectric")
+}
+
+// Спасить весь сайт и загрузить по разным Xlsx файлам
+func ParseItemsAndSave() {
+	// Получить все категории на директ электрике
+	links := directelectric.ParseCatalogs()
+
+	fmt.Println("Ссылки для парсинга: ", links)
+
+	directelectric.ParseItemsAndSaveAnotherXlsx(links)
 }
 
 // Тестовый запуск по link розеток
@@ -44,7 +54,7 @@ func RunOneLink() {
 	// Пропарсить карточки товаров
 	items.ParseAllItem()
 
-	items.SaveXlsx()
+	items.SaveXlsx("directelectric")
 }
 
 // Получение значение из файла

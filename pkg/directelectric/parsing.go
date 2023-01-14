@@ -71,38 +71,39 @@ func ParseCatalogs() []string {
 	return links
 }
 
-// Функция парсит [страницу] по определённому page
+// Функция парсит все [ссылки] из массива и результат сохраняет в множество Xlsx
 //
-// [страницу]: https://www.directelectric.ru/catalog/rozetki-i-vyklyuchateli/filter/vendor_new-is-schneider%20electric/serial-is-atlasdesign/apply/?PAGEN_1=2&nal=y
-func (items *DirectelEctricObjects) ParseItems(links []string) {
-
-	var schetchik int = 1
-
+// [ссылки]: https://www.directelectric.ru/catalog/
+func ParseItemsAndSaveAnotherXlsx(links []string) {
 	for _, link := range links {
+		var items DirectelEctricObjects
 		fmt.Println("> Парсинг подкаталога", URL+link)
-		for {
-			fmt.Println("--> Страница", schetchik)
-
-			// Выход из цикла парсинга
-			if !next {
-				next = true
-				break
-			}
-
-			// Делаем ссылку со страницей
-			linkPages, _ := MakeLinkWithPage(URL+link, schetchik)
-
-			// Парсим
-			c.Visit(linkPages)
-			schetchik++
-		}
+		items.parseItem(link)
+		link = strings.ReplaceAll(link, "catalog/", "")
+		link = strings.ReplaceAll(link, "/", "")
+		items.SaveXlsx(link)
 	}
 }
 
-func (items *DirectelEctricObjects) parseItem(link string, schetchik int) {
+// Метод парсит все [ссылки] из массива и результат записывает в приемник
+//
+// [ссылки]: https://www.directelectric.ru/catalog/
+func (items *DirectelEctricObjects) ParseItems(links []string) {
+	for _, link := range links {
+		fmt.Println("> Парсинг подкаталога", URL+link)
+		items.parseItem(link)
+	}
+}
+
+// Метод парсит [страницу] по определённому по всем его возможным страницам
+//
+// [страницу]: https://www.directelectric.ru/catalog/rozetki-i-vyklyuchateli/filter/vendor_new-is-schneider%20electric/serial-is-atlasdesign/apply/?PAGEN_1=2&nal=y
+
+func (items *DirectelEctricObjects) parseItem(link string) {
 	//fmt.Println("Parse", link)
 
 	var next bool = true
+	var schetchik int = 1
 
 	c := colly.NewCollector()
 
@@ -149,14 +150,14 @@ func (items *DirectelEctricObjects) parseItem(link string, schetchik int) {
 			}
 		}
 	})
-	/*
-		for _, link := range links {
-			fmt.Println(next, URL+link)
-			linkPages, _ := MakeLinkWithPage(URL+link, schetchik)
-			c.Visit(linkPages)
-		}
+
+	/* // Одичночный парсинг
+	fmt.Println(next, URL+link)
+	linkPages, _ := MakeLinkWithPage(URL+link, schetchik)
+	c.Visit(linkPages)
 	*/
 
+	// Цикл по всем страницам
 	for {
 		fmt.Println("--> Страница", schetchik)
 

@@ -38,7 +38,7 @@ func WriteOneLine(f *excelize.File, ssheet string, row int, SearchBasicRes Searc
 */
 
 // Сохранить данные в Xlsx
-func (items DirectelEctricObjects) SaveXlsx() error {
+func (items DirectelEctricObjects) SaveXlsx(filename string) error {
 	// Создать книгу
 	book, makeBookError := makeWorkBook()
 	if makeBookError != nil {
@@ -85,7 +85,7 @@ func (items DirectelEctricObjects) SaveXlsx() error {
 	}
 
 	// Закрыть книгу
-	closeBookError := closeXlsx(book, "directelectric")
+	closeBookError := closeXlsx(book, filename)
 	if closeBookError != nil {
 		return closeBookError
 	}
