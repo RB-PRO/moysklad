@@ -79,6 +79,7 @@ func ParseItemsAndSaveAnotherXlsx(links []string) {
 		var items DirectelEctricObjects
 		fmt.Println("> Парсинг подкаталога", URL+link)
 		items.parseItem(link)
+		items.ParseAllItem()
 		link = strings.ReplaceAll(link, "catalog/", "")
 		link = strings.ReplaceAll(link, "/", "")
 		items.SaveXlsx(link)
