@@ -7,6 +7,6 @@ import (
 func main() {
 	//app.RunAllCategory() // Запуск по всем категориям
 	//app.RunOneLink() // Запуск по тестовой ссылке
-	//app.AddProduct() // Работа с сервисом moysklad
-	app.ParseItemsAndSave() // Сохранить весь сайт в Xlsx
+	app.AddProduct() // Работа с сервисом moysklad
+	//app.ParseItemsAndSave() // Сохранить весь сайт в Xlsx
 }
