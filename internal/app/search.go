@@ -35,6 +35,8 @@ func ParseItemsAndSave() {
 
 	fmt.Println("Ссылки для парсинга: ", links)
 
+	links = links[1:]
+
 	directelectric.ParseItemsAndSaveAnotherXlsx(links)
 }
 

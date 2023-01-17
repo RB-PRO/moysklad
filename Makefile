@@ -21,9 +21,9 @@ build-config:
 build-linux:
 	set GOARCH=amd64
 	set GOOS=linux
-	go build cmd/main/main.go
+	go build .\cmd\main\main.go  
 
 build-windows:
 	set GOARCH=amd64
 	set GOOS=windows
-	go build cmd/main/main.go
+	go build .\cmd\main\main.go  
