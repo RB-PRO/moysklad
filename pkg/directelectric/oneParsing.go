@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/cheggaaa/pb"
 	"github.com/gocolly/colly"
 )
 
@@ -66,14 +67,20 @@ func (items *DirectelEctricObjects) ParseAllItem() {
 		items.Data[itemIndexGlobal].Description = strings.TrimSpace(e.DOM.Text())
 	})
 
+	// Вывод прогресса
+	bar := pb.StartNew(len(items.Data))
+	fmt.Println("Парсинг каждой карточки товара")
+
 	for _, itemVal := range items.Data {
-		fmt.Println("Parse Item: ", itemIndexGlobal+1, "/", len(items.Data))
+		bar.Increment() // Прибавляем 1 к отображению
+		//fmt.Println("Parse Item: ", itemIndexGlobal+1, "/", len(items.Data))
 		items.Data[itemIndexGlobal].Specifications = make(map[string]string) // Выделяем память в мапу
 		c.Visit(URL + itemVal.Link)
 		itemIndexGlobal++
 
 	}
 
+	bar.Finish()
 	/*
 		items.Data[itemIndexGlobal].Specifications = make(map[string]string) // Выделяем память в мапу
 		c.Visit(URL + items.Data[0].Link)
