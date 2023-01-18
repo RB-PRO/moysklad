@@ -1,8 +1,6 @@
 package main
 
-import (
-	"github.com/RB-PRO/moysklad/internal/app"
-)
+import "github.com/RB-PRO/moysklad/internal/app"
 
 func main() {
 	//app.RunAllCategory() // Запуск по всем категориям

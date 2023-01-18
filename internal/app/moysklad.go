@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/dotnow/moysklad"
+	"github.com/dotnow/moysklad/params"
 )
 
 func AddProduct() {
@@ -29,6 +30,9 @@ func AddProduct() {
 
 	//p := params.NewParams()
 
-	//p.
+	p := params.NewParams()
 
+	productsWithParams := ms.Entity().Product().Create(p)
+
+	fmt.Println(string(productsWithParams.Body))
 }
