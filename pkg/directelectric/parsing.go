@@ -11,7 +11,7 @@ const URL string = "https://www.directelectric.ru"
 
 // Весь массив с данными товаров
 type DirectelEctricObjects struct {
-	Data []Product
+	Data []Product // Массив с товарами, который используется для загрузки товаров на МойСклад
 }
 
 // Структура карточки товара
@@ -21,12 +21,15 @@ type Product struct {
 	Link           string            // Ссылка на товар
 	imageLink      string            // Ссылка на фото товара
 	NameFull       string            // Полное Название товара
+	Code           string            // Код
 	NameFew        string            // Краткое Название товара
 	Description    string            // Описание товара
 	Article        string            // Артикул
 	Price          float64           // Цена
 	Availability   bool              // Наличие
 	Dimension      string            // Размерность(шт, кг, тонна)
+	Weight         float64           // Вес
+	Volume         float64           // Объём
 	Specifications map[string]string // Остальные характеристики
 }
 

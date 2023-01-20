@@ -30,6 +30,16 @@ func (items *DirectelEctricObjects) ParseAllItem() {
 			break
 		case "Артикул":
 			items.Data[itemIndexGlobal].Article = value // Заполняем артикул
+		case "Код":
+			items.Data[itemIndexGlobal].Code = value // Заполняем Код товара
+		case "Вес":
+			if floatValue, err := strconv.ParseFloat(value, 64); err == nil {
+				items.Data[itemIndexGlobal].Weight = floatValue // Заполняем Вес
+			}
+		case "Объём":
+			if floatValue, err := strconv.ParseFloat(value, 64); err == nil {
+				items.Data[itemIndexGlobal].Volume = floatValue // Заполняем Объём
+			}
 		default:
 			items.Data[itemIndexGlobal].Specifications[key] = value // Заполняем мапу характеристиками товара
 		}
@@ -68,8 +78,8 @@ func (items *DirectelEctricObjects) ParseAllItem() {
 	})
 
 	// Вывод прогресса
+	fmt.Println("--> Парсинг каждой карточки товара")
 	bar := pb.StartNew(len(items.Data))
-	fmt.Println("Парсинг каждой карточки товара")
 
 	for _, itemVal := range items.Data {
 		bar.Increment() // Прибавляем 1 к отображению

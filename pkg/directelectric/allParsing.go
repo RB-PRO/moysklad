@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/cheggaaa/pb"
 	"github.com/gocolly/colly"
 )
 
@@ -37,7 +38,6 @@ func (items *DirectelEctricObjects) ParseItems(links []string) {
 // Метод парсит [страницу] по определённому по всем его возможным страницам
 //
 // [страницу]: https://www.directelectric.ru/catalog/rozetki-i-vyklyuchateli/filter/vendor_new-is-schneider%20electric/serial-is-atlasdesign/apply/?PAGEN_1=2&nal=y
-
 func (items *DirectelEctricObjects) parseItem(link string) {
 	//fmt.Println("Parse", link)
 
@@ -96,9 +96,12 @@ func (items *DirectelEctricObjects) parseItem(link string) {
 	c.Visit(linkPages)
 	*/
 
+	fmt.Println("-> Парсинг всех страниц категории:")
+	bar := pb.StartNew(1000)
+
 	// Цикл по всем страницам
 	for {
-		fmt.Println("--> Страница", schetchik)
+		//fmt.Println("--> Страница", schetchik)
 
 		// Выход из цикла парсинга
 		if !next {
@@ -109,10 +112,13 @@ func (items *DirectelEctricObjects) parseItem(link string) {
 		// Делаем ссылку со страницей
 		linkPages, _ := MakeLinkWithPage(URL+link, schetchik)
 
+		bar.Increment() // Прибавляем 1 к отображению
+
 		// Парсим
 		c.Visit(linkPages)
 		schetchik++
 
 	}
+	bar.Finish()
 
 }
