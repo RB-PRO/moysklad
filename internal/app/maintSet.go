@@ -29,8 +29,8 @@ func ParseAllObjectAndLoadToMoySklad() {
 	links := directelectric.ParseCatalogs()
 
 	fmt.Println("Найдено всего", len(links), "категорий")
-	links = links[:1]
-	fmt.Println(links)
+	//links = links[:1]
+	fmt.Println("links", links)
 
 	// Определение структуры с данными
 	var items directelectric.DirectelEctricObjects

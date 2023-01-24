@@ -33,7 +33,7 @@ func AddProductMoySklad(prod directelectric.Product, ms *client.JSONApiClient, m
 		log.Println(currencyError)
 	}
 	var price entity.FloatPrice                                               // Создаём объект цены
-	price = 322.0                                                             // Устанавливаем цену
+	price = entity.FloatPrice(prod.Price)                                     // Устанавливаем цену
 	product.BuyPrice = &entity.BuyPrice{Value: price, Currency: &valCurrency} // Закупочная цена prod.Price
 
 	// Единицы измерения
@@ -59,7 +59,7 @@ func AddProductMoySklad(prod directelectric.Product, ms *client.JSONApiClient, m
 				Meta:  metaAttributes[keyAttr],       // Meta дополнительного поля
 				Value: prod.Specifications[keyAttr]}) // Значение, которое необходимо записать
 		} else { // В ином случае дополняем эту информацию в описание товара
-			product.Description += "\n" + keyAttr + " - " + valAttr
+			product.Description += "\n" + "<strong>" + keyAttr + " - " + valAttr + "</strong>"
 		}
 	}
 	product.Attributes = attrs // Записываем дополнительные поля в структуру запроса
