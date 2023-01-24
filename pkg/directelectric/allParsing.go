@@ -17,7 +17,7 @@ func ParseItemsAndSaveAnotherXlsx(links []string) {
 	for _, link := range links {
 		var items DirectelEctricObjects
 		fmt.Println("> Парсинг подкаталога", URL+link)
-		items.parseItem(link)
+		items.ParseItem(link)
 		items.ParseAllItem()
 		link = strings.ReplaceAll(link, "catalog/", "")
 		link = strings.ReplaceAll(link, "/", "")
@@ -31,14 +31,14 @@ func ParseItemsAndSaveAnotherXlsx(links []string) {
 func (items *DirectelEctricObjects) ParseItems(links []string) {
 	for _, link := range links {
 		fmt.Println("> Парсинг подкаталога", URL+link)
-		items.parseItem(link)
+		items.ParseItem(link)
 	}
 }
 
 // Метод парсит [страницу] по определённому по всем его возможным страницам
 //
 // [страницу]: https://www.directelectric.ru/catalog/rozetki-i-vyklyuchateli/filter/vendor_new-is-schneider%20electric/serial-is-atlasdesign/apply/?PAGEN_1=2&nal=y
-func (items *DirectelEctricObjects) parseItem(link string) {
+func (items *DirectelEctricObjects) ParseItem(link string) {
 	//fmt.Println("Parse", link)
 
 	var next bool = true

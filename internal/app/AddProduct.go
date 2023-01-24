@@ -1,3 +1,6 @@
+// Модуль для загрузки товаров в МойСклад
+//
+// Данный модуль использует библиотеку github.com/dotnow/moysklad@v0.0.2-beta3
 package app
 
 import (
@@ -6,7 +9,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 
@@ -15,8 +17,13 @@ import (
 	"github.com/dotnow/moysklad/entity"
 )
 
-// Загрузить товар на МойСклад.
-func AddProductMoySklad(prod directelectric.Product, ms *client.JSONApiClient, metaAttributes map[string]*entity.Meta, metaUom entity.Uom) directelectric.Product {
+// Метод загрузки товара на МойСклад
+//
+//	prod directelectric.Product - Сам товар для загрузки
+//	ms *client.JSONApiClient - Авторизация клиента
+//	metaAttributes map[string]*entity.Meta - Валюта
+//	metaUom entity.Uom - Единицы измерения
+func AddProductMoySklad(prod directelectric.Product, ms *client.JSONApiClient, metaAttributes map[string]*entity.Meta, metaUom entity.Uom, valCurrency entity.Currency) directelectric.Product {
 	product := new(entity.Product) // Создаём товар
 
 	// Обязательные поля
@@ -28,13 +35,7 @@ func AddProductMoySklad(prod directelectric.Product, ms *client.JSONApiClient, m
 	product.Description = prod.Description // Описание товара
 
 	// Цена
-	valCurrency, currencyError := EntityRuble(ms)
-	if currencyError != nil {
-		log.Println(currencyError)
-	}
-	var price entity.FloatPrice                                               // Создаём объект цены
-	price = entity.FloatPrice(prod.Price)                                     // Устанавливаем цену
-	product.BuyPrice = &entity.BuyPrice{Value: price, Currency: &valCurrency} // Закупочная цена prod.Price
+	product.BuyPrice = &entity.BuyPrice{Value: entity.FloatPrice(prod.Price), Currency: &valCurrency} // Закупочная цена prod.Price
 
 	// Единицы измерения
 	product.Uom = &metaUom

@@ -32,12 +32,6 @@ func ParseAllObjectAndLoadToMoySklad() {
 	//links = links[:1]
 	fmt.Println("links", links)
 
-	// Определение структуры с данными
-	var items directelectric.DirectelEctricObjects
-
-	// Пропарсить в подкатегории
-	items.ParseItems(links)
-
 	// Получаем список дополнительных полей
 	metaAttributes, _ := MetaAttr(ms)
 	fmt.Println("Всего дополнительных полей:", len(metaAttributes))
@@ -47,17 +41,31 @@ func ParseAllObjectAndLoadToMoySklad() {
 	if errorUom != nil {
 		log.Println(errorUom)
 	}
-
-	// Пропарсить карточки товаров и добавить сразу на МойСклад // items.ParseAllItem()
-	fmt.Println("-> Парсинг каждой карточки товара")
-	bar := pb.StartNew(len(items.Data))
-	for indexItem := range items.Data { // Индекс по всем карточкам товаров
-		bar.Increment()                                                                                // Прибавляем 1 к отображению
-		items.Data[indexItem].Specifications = make(map[string]string)                                 // Выделяем память в мапу
-		items.Data[indexItem].SingleCart()                                                             // Пропарсить карточку товара
-		items.Data[indexItem] = AddProductMoySklad(items.Data[indexItem], ms, metaAttributes, metaUom) // Добавить товар в корзину
+	// цена
+	valCurrency, currencyError := EntityRuble(ms)
+	if currencyError != nil {
+		log.Println(currencyError)
 	}
-	bar.Finish()
+	// *********************** START ***********************
 
-	items.SaveXlsx("directelectric")
+	for _, link := range links { // Пропарсить в подкатегории // цикл по всем link, вместо items.ParseItems(links)
+		// Определение структуры с данными
+		var items directelectric.DirectelEctricObjects
+		fmt.Println("> Парсинг подкаталога", directelectric.URL+link)
+		items.ParseItem(link)
+
+		// Пропарсить карточки товаров и добавить сразу на МойСклад // items.ParseAllItem()
+		fmt.Println("-> Парсинг каждой карточки товара")
+		bar := pb.StartNew(len(items.Data))
+		for indexItem := range items.Data { // Индекс по всем карточкам товаров
+			bar.Increment()                                                                                             // Прибавляем 1 к отображению
+			items.Data[indexItem].Specifications = make(map[string]string)                                              // Выделяем память в мапу
+			items.Data[indexItem].SingleCart()                                                                          // Пропарсить карточку товара
+			items.Data[indexItem] = AddProductMoySklad(items.Data[indexItem], ms, metaAttributes, metaUom, valCurrency) // Добавить товар в корзину
+		}
+		bar.Finish()
+
+		items.SaveXlsx(link) // Сохранить в XLSX
+	}
+
 }
