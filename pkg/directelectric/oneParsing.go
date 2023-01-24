@@ -74,6 +74,7 @@ func (prod *Product) SingleCart() {
 
 	c.Visit(URL + prod.Link)
 	prod.Specifications["Ссылка на товар"] = prod.Link
+	prod.Specifications["Ссылка на фото"] = prod.ImageLink
 	/*
 		prod.Specifications = make(map[string]string) // Выделяем память в мапу
 		c.Visit(URL + items.Data[0].Link)
