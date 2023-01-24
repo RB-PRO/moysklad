@@ -61,7 +61,7 @@ func (items DirectelEctricObjects) SaveXlsx(filename string) error {
 	colName := make(map[string]int)
 	for indexItem, valItem := range items.Data {
 		setCell(book, wotkSheet, indexItem, 1, URL+valItem.Link)     // Ссылка на товар
-		setCell(book, wotkSheet, indexItem, 2, valItem.imageLink)    // Фото
+		setCell(book, wotkSheet, indexItem, 2, valItem.ImageLink)    // Фото
 		setCell(book, wotkSheet, indexItem, 3, valItem.NameFull)     // Полное Название товар
 		setCell(book, wotkSheet, indexItem, 4, valItem.NameFew)      // Краткое Название товара
 		setCell(book, wotkSheet, indexItem, 5, valItem.Description)  // Описание товара

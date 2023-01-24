@@ -19,7 +19,7 @@ type DirectelEctricObjects struct {
 // Главная особенность - гарантированные данные
 type Product struct {
 	Link           string            // Ссылка на товар
-	imageLink      string            // Ссылка на фото товара
+	ImageLink      string            // Ссылка на фото товара
 	NameFull       string            // Полное Название товара
 	Code           string            // Код
 	NameFew        string            // Краткое Название товара

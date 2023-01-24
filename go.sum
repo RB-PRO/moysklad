@@ -13,8 +13,8 @@ github.com/cheggaaa/pb v1.0.29/go.mod h1:W40334L7FMC5JKWldsTWbdGjLo0RxUKK73K+TuP
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/dotnow/moysklad v0.0.2-beta1 h1:0boTJ/p51+g5IWhi5X3aexSZwFZKgnee2Q3OF5nEJJs=
-github.com/dotnow/moysklad v0.0.2-beta1/go.mod h1:lVnWkS6N3+1zjkctlfzSONq0E3gzD07RagchLoksAQw=
+github.com/dotnow/moysklad v0.0.2-beta2.0.20230122154711-c084ab31e02c h1:OqNB14Hp67iC++zW00+1b6qzhskUIimPUW5BZOAsTDk=
+github.com/dotnow/moysklad v0.0.2-beta2.0.20230122154711-c084ab31e02c/go.mod h1:lVnWkS6N3+1zjkctlfzSONq0E3gzD07RagchLoksAQw=
 github.com/fatih/color v1.9.0/go.mod h1:eQcE1qtQxscV5RaZvpXrrb8Drkc3/DdQ+uUYCNjL+zU=
 github.com/fatih/color v1.10.0 h1:s36xzo75JdqLaaWoiEHk767eHiwo0598uUxyfiPkDsg=
 github.com/fatih/color v1.10.0/go.mod h1:ELkj/draVOlAH/xkhN6mQ50Qd0MPOk5AAr3maGEBuJM=

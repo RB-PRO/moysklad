@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/cheggaaa/pb v1.0.29
-	github.com/dotnow/moysklad v0.0.2-beta1
+	github.com/dotnow/moysklad v0.0.2-beta2.0.20230122154711-c084ab31e02c
 	github.com/gocolly/colly v1.2.0
 	github.com/xuri/excelize/v2 v2.7.0
 )
