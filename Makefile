@@ -10,7 +10,7 @@ pull:
 	git pull git@github.com:RB-PRO/moysklad.git
 
 pushW:
-	git push https://github.com/RB-PRO/moysklad.git
+	git pushW https://github.com/RB-PRO/moysklad.git
 
 pullW:
 	git pull https://github.com/RB-PRO/moysklad.git
