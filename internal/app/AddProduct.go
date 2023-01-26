@@ -7,10 +7,11 @@ import (
 	"bufio"
 	"encoding/base64"
 	"errors"
-	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/RB-PRO/moysklad/pkg/directelectric"
 	"github.com/dotnow/moysklad/client"
@@ -41,13 +42,15 @@ func AddProductMoySklad(prod directelectric.Product, ms *client.JSONApiClient, m
 	product.Uom = &metaUom
 
 	// Загрузить создать объект картинки для загрузки
-	errorDownload := downloadFile(prod.ImageLink, "main.jpeg") // Загрузить изображение
-	if errorDownload == nil {                                  // Если картинка загружена
-		img, imgError := ImageBase("main.jpeg") // Получить экземпляр изображения
-		if imgError != nil {
-			fmt.Println(imgError)
+	if prod.ImageLink != directelectric.URL {
+		errorDownload := downloadFile(prod.ImageLink, "main.jpeg") // Загрузить изображение
+		if errorDownload == nil {                                  // Если картинка загружена
+			img, imgError := ImageBase("main.jpeg") // Получить экземпляр изображения
+			if imgError != nil {
+				log.Println(imgError)
+			}
+			product.Images.Add(img) // Добавить изображение в товар
 		}
-		product.Images.Add(img) // Добавить изображение в товар
 	}
 
 	// Массив дополнительных полей, которые мы будет прикреплять к запросу на создание товара
@@ -66,9 +69,15 @@ func AddProductMoySklad(prod directelectric.Product, ms *client.JSONApiClient, m
 	product.Attributes = attrs // Записываем дополнительные поля в структуру запроса
 
 	// Отправляем запрос за создание товара
-	result, response := ms.Entity().Product().Create(*product)
-	fmt.Println("result", (result))
-	fmt.Println("response", (response.GetErrorsInline()))
+	_, response := ms.Entity().Product().Create(*product)
+	//fmt.Println("result", (result))
+	//fmt.Println("response", (response.GetErrorsInline()))
+	if response.GetErrorsInline() != nil {
+		log.Print(response.GetErrorsInline().Error() + "; ")
+		if strings.Contains(response.GetErrorsInline().Error(), "enexpected end of JSON input") {
+			log.Fatalln("Не смог загрузить товар. Паникую!")
+		}
+	}
 	return prod
 }
 
