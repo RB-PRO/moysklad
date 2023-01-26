@@ -115,6 +115,7 @@ func (items *DirectelEctricObjects) ParseItem(link string) {
 		bar.Increment() // Прибавляем 1 к отображению
 
 		// Парсим
+		//fmt.Println(linkPages)
 		c.Visit(linkPages)
 		schetchik++
 

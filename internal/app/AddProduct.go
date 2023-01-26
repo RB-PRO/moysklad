@@ -7,6 +7,7 @@ import (
 	"bufio"
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -124,11 +125,14 @@ func downloadFile(URL, fileName string) error {
 //
 // map[string]string - map["Название дополнительного поля"] = "Ссылка на поле"
 func MetaAttr(ms *client.JSONApiClient) (map[string]*entity.Meta, error) {
-	attributes := make(map[string]*entity.Meta)                          // Выделяем память в структуру, которая хранит данные о дополнительных полях
-	MetadataAttr, response := ms.Entity().Product().MetadataAttributes() // Выполнить запрос дополнительных полей
-	if response.HasErrors() {                                            // Проверяем на наличие ошибки в запросе
+	attributes := make(map[string]*entity.Meta) // Выделяем память в структуру, которая хранит данные о дополнительных полях
+	//MetadataAttr, response := ms.Entity().Product().MetadataAttributes() // Выполнить запрос дополнительных полей
+	MetadataAttr, response := ms.Entity().Product().MetadataAttributes()
+	fmt.Printf("%#v", MetadataAttr)
+	if response.HasErrors() { // Проверяем на наличие ошибки в запросе
 		return nil, response.GetErrorsInline()
 	}
+	fmt.Printf("%#v", MetadataAttr)
 	for _, val := range MetadataAttr.Rows { // Цикл по результатам запроса
 		attributes[val.Name] = val.Meta // Заполняем map
 	}
