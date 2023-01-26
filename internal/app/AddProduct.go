@@ -7,7 +7,6 @@ import (
 	"bufio"
 	"encoding/base64"
 	"errors"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -49,8 +48,9 @@ func AddProductMoySklad(prod directelectric.Product, ms *client.JSONApiClient, m
 			img, imgError := ImageBase("main.jpeg") // Получить экземпляр изображения
 			if imgError != nil {
 				log.Println(imgError)
+			} else {
+				product.Images.Add(img) // Добавить изображение в товар
 			}
-			product.Images.Add(img) // Добавить изображение в товар
 		}
 	}
 
@@ -74,7 +74,7 @@ func AddProductMoySklad(prod directelectric.Product, ms *client.JSONApiClient, m
 	//fmt.Println("result", (result))
 	//fmt.Println("response", (response.GetErrorsInline()))
 	if response.GetErrorsInline() != nil {
-		log.Print(response.GetErrorsInline().Error() + "; ")
+		//log.Print(response.GetErrorsInline().Error() + "; ")
 		if strings.Contains(response.GetErrorsInline().Error(), "enexpected end of JSON input") {
 			log.Fatalln("Не смог загрузить товар. Паникую!")
 		}
@@ -128,11 +128,10 @@ func MetaAttr(ms *client.JSONApiClient) (map[string]*entity.Meta, error) {
 	attributes := make(map[string]*entity.Meta) // Выделяем память в структуру, которая хранит данные о дополнительных полях
 	//MetadataAttr, response := ms.Entity().Product().MetadataAttributes() // Выполнить запрос дополнительных полей
 	MetadataAttr, response := ms.Entity().Product().MetadataAttributes()
-	fmt.Printf("%#v", MetadataAttr)
-	if response.HasErrors() { // Проверяем на наличие ошибки в запросе
-		return nil, response.GetErrorsInline()
+	if response.HasErrors() {
+		log.Fatalln(response.GetErrorsInline().Error())
 	}
-	fmt.Printf("%#v", MetadataAttr)
+	//fmt.Printf("%#v", MetadataAttr)
 	for _, val := range MetadataAttr.Rows { // Цикл по результатам запроса
 		attributes[val.Name] = val.Meta // Заполняем map
 	}

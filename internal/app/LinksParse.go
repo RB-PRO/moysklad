@@ -14,34 +14,39 @@ func ParseLinks(links []string) {
 	// Авторизация на сервисе МойСклад
 	//username, _ := dataFile("username") // Получить логин из файла
 	//password, _ := dataFile("password") // Получить пароль из файла
-	username := Pass() // Получить логин
-	password := User() // Получить пароль
+	username := User() // Получить логин
+	password := Pass() // Получить пароль
 
 	ms := moysklad.NewClientWithBasicAuth(username, password)
 	ms.PrettyPrintJson(true)       // Включить вывод форматированного JSON
 	ms.DisableWebhookContent(true) // Отключить уведомление вебхуков в контексте данного запроса
-	ms.SetAttempts(10)
+	ms.PricePrecision(true)
+
+	ms.SetAttempts(0)
 	ms.SetTimeout(100)
 
 	// *********************************************************************************************
 
 	fmt.Println("Найдено всего", len(links), "категорий")
 	//links = links[:1]
-	fmt.Println("links", links)
+	fmt.Println("Ссылки на товары:", links)
 
 	// Получаем список дополнительных полей
-	metaAttributes, _ := MetaAttr(ms)
+	metaAttributes, metaAttributesError := MetaAttr(ms)
+	if metaAttributesError != nil {
+		log.Fatalln(metaAttributesError)
+	}
 	fmt.Println("Всего дополнительных полей:", len(metaAttributes))
 
 	// Единицы измерения
 	metaUom, errorUom := MetaUom(ms)
 	if errorUom != nil {
-		log.Println(errorUom)
+		log.Fatalln(errorUom)
 	}
 	// цена
 	valCurrency, currencyError := EntityRuble(ms)
 	if currencyError != nil {
-		log.Println(currencyError)
+		log.Fatalln(currencyError)
 	}
 
 	// *********************** START ***********************
