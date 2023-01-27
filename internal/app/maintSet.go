@@ -59,4 +59,15 @@ func Schuse() {
 	} else {
 		fmt.Println("Неверный ввод. Перезапустите меня.")
 	}
+
+	fmt.Println("Press 'q' to quit")
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		exit := scanner.Text()
+		if exit == "q" {
+			break
+		} else {
+			fmt.Println("Press 'q' to quit")
+		}
+	}
 }

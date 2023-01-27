@@ -3,6 +3,7 @@ package directelectric
 import (
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/gocolly/colly"
 )
@@ -34,13 +35,23 @@ type Product struct {
 }
 
 // Изменить ссылку с параметром запрашиваемой страницы
-func MakeLinkWithPage(link string, page int) (string, error) {
+func MakeLinkWithPage(link string, pagesString string, page int) (string, error) {
 	urlA, err := url.Parse(link)
 	if err != nil {
 		return "", err
 	}
+
 	values := urlA.Query()
-	values.Set("PAGEN_1", strconv.Itoa(page)) // Страница
+	if strings.Contains(link, "PAGEN_1") {
+		pagesString = "PAGEN_1"
+	}
+	if strings.Contains(link, "PAGEN_2") {
+		pagesString = "PAGEN_2"
+	}
+	if pagesString != "" {
+		values.Set(pagesString, strconv.Itoa(page)) // Страница
+	}
+
 	//values.Set("nal", "n")                    // В наличии = false(Значит будут показываеться товары как в наличии, так и нет)
 	values.Set("limit", "16") // Показывать по 16 товаров на странице. Это необходимо для корректного отображения всех товаров. ПРи 24 отображается всего 20
 

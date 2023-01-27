@@ -43,7 +43,7 @@ func ParseLinks(links []string) {
 	if errorUom != nil {
 		log.Fatalln(errorUom)
 	}
-	// цена
+	// цена закупочная
 	valCurrency, currencyError := EntityRuble(ms)
 	if currencyError != nil {
 		log.Fatalln(currencyError)

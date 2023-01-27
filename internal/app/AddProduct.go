@@ -36,7 +36,13 @@ func AddProductMoySklad(prod directelectric.Product, ms *client.JSONApiClient, m
 	product.Description = prod.Description // Описание товара
 
 	// Цена
-	product.BuyPrice = &entity.BuyPrice{Value: entity.FloatPrice(prod.Price), Currency: &valCurrency} // Закупочная цена prod.Price
+	product.BuyPrice = &entity.BuyPrice{Value: entity.FloatPrice(prod.Price * 100), Currency: &valCurrency} // Закупочная цена prod.Price
+
+	product.MinPrice = &entity.MinPrice{Value: prod.Price * 100, Currency: valCurrency} // Закупочная цена prod.Priceq
+
+	//price := entity.Price{PriceType: DefaultPrice, Currency: valCurrency, Value: int(prod.Price * 100.0)}
+
+	//product.
 
 	// Единицы измерения
 	product.Uom = &metaUom

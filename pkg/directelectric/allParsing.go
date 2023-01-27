@@ -41,6 +41,7 @@ func (items *DirectelEctricObjects) ParseItems(links []string) {
 func (items *DirectelEctricObjects) ParseItem(link string) {
 	//fmt.Println("Parse", link)
 
+	var pagesString string
 	var next bool = true
 	var schetchik int = 1
 
@@ -69,7 +70,7 @@ func (items *DirectelEctricObjects) ParseItem(link string) {
 	})
 
 	// Проверить можно ли дальше листать
-	c.OnHTML("[class=pagination__next]", func(e *colly.HTMLElement) {
+	c.OnHTML("[class='pagination__next']", func(e *colly.HTMLElement) {
 		//fmt.Println(e.DOM.Text())
 		hrefNext, hrefNextIsExit := e.DOM.Attr("href")
 		//fmt.Println(">>", hrefNext, hrefNextIsExit)
@@ -84,8 +85,19 @@ func (items *DirectelEctricObjects) ParseItem(link string) {
 			m, _ := url.ParseQuery(u.RawQuery)
 
 			//fmt.Println("m[PAGEN_1][0]", m["PAGEN_1"][0], "schetchik", schetchik)
-			if m["PAGEN_1"][0] == strconv.Itoa(schetchik) {
-				next = false
+			if strings.Contains(hrefNext, "PAGEN_1") {
+				pagesString = "PAGEN_1"
+				if m["PAGEN_1"][0] == strconv.Itoa(schetchik) {
+
+					next = false
+				}
+			}
+			if strings.Contains(hrefNext, "PAGEN_2") {
+				pagesString = "PAGEN_2"
+				if m["PAGEN_2"][0] == strconv.Itoa(schetchik) {
+
+					next = false
+				}
 			}
 		}
 	})
@@ -110,12 +122,13 @@ func (items *DirectelEctricObjects) ParseItem(link string) {
 		}
 
 		// Делаем ссылку со страницей
-		linkPages, _ := MakeLinkWithPage(URL+link, schetchik)
+		linkPages, _ := MakeLinkWithPage(URL+link, pagesString, schetchik)
 
 		bar.Increment() // Прибавляем 1 к отображению
 
 		// Парсим
 		//fmt.Println(linkPages)
+
 		c.Visit(linkPages)
 		schetchik++
 
