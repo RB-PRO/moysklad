@@ -18,12 +18,20 @@ pullW:
 build-config:
 	go env GOOS GOARCH
 
-build-linux:
-	set GOARCH=amd64
-	set GOOS=linux
-	go build .\cmd\main\main.go  
+build-linux-osx:
+	export GOARCH=arm
+	export GOOS=linux
+	go env GOOS GOARCH
+	go build ./cmd/main/main.go  
 
-build-windows:
-	set GOARCH=amd64
-	set GOOS=windows
-	go build .\cmd\main\main.go  
+build-linux-linux:
+	export GOARCH=amd64
+	export GOOS=linux
+	go env GOOS GOARCH
+	go build ./cmd/main/main.go
+
+build-linux-windows:
+	export GOARCH=amd64
+	export GOOS=windows
+	go env GOOS GOARCH
+	go build ./cmd/main/main.go  

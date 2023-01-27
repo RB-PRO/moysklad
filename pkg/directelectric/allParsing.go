@@ -132,6 +132,8 @@ func (items *DirectelEctricObjects) ParseItem(link string) {
 		c.Visit(linkPages)
 		schetchik++
 
+		//break
+
 	}
 	bar.Finish()
 

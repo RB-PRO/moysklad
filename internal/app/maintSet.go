@@ -36,7 +36,7 @@ func ParseLinkAndLoadToMoySklad() {
 	if errorReader != nil {
 		log.Fatalln(errorReader)
 	}
-	//links[0] = "https://www.directelectric.ru/catalog/rozetki-i-vyklyuchateli/filter/vendor_new-is-schneider%20electric/serial-is-bip-or-boxint/apply/?limit=16"
+	//links[0] = "https://www.directelectric.ru/catalog/?q=brite&s"
 	links[0] = strings.ReplaceAll(links[0], directelectric.URL, "")
 	links[0] = strings.TrimSpace(links[0])
 	//links[0], _ = dataFile("link")
