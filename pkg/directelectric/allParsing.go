@@ -99,9 +99,20 @@ func (items *DirectelEctricObjects) ParseItem(link string) {
 					next = false
 				}
 			}
+
+			// Если нет вообще ничего
+			// https://www.directelectric.ru/catalog/elektricheskie-teplye-poly/nagrevatelnye-maty/filter/vendor_new-is-ekf/apply/
+			if !strings.Contains(hrefNext, "PAGEN_1") && !strings.Contains(hrefNext, "PAGEN_2") {
+				next = false
+			}
 		}
 	})
-
+	c.OnHTML("body", func(e *colly.HTMLElement) {
+		// Если вообще ничего не нашли
+		if e.DOM.Find("[class='pagination__next']").Text() == "" {
+			next = false
+		}
+	})
 	/* // Одичночный парсинг
 	fmt.Println(next, URL+link)
 	linkPages, _ := MakeLinkWithPage(URL+link, schetchik)
@@ -116,7 +127,7 @@ func (items *DirectelEctricObjects) ParseItem(link string) {
 		//fmt.Println("--> Страница", schetchik)
 
 		// Выход из цикла парсинга
-		if !next {
+		if next == false { //!next
 			next = true
 			break
 		}
