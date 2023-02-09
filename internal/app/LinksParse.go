@@ -12,10 +12,10 @@ import (
 
 func ParseLinks(links []string) {
 	// Авторизация на сервисе МойСклад
-	//username, _ := dataFile("username") // Получить логин из файла
-	//password, _ := dataFile("password") // Получить пароль из файла
-	username := User() // Получить логин
-	password := Pass() // Получить пароль
+	username, _ := dataFile("username") // Получить логин из файла
+	password, _ := dataFile("password") // Получить пароль из файла
+	//username := User() // Получить логин
+	//password := Pass() // Получить пароль
 
 	ms := moysklad.NewClientWithBasicAuth(username, password)
 	ms.PrettyPrintJson(true)       // Включить вывод форматированного JSON
